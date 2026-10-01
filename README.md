@@ -1,8 +1,32 @@
 # Agent Blackboard（智能体动态协作黑板系统）
 
+[![CI](https://github.com/Ricardo-ye/agent-blackboard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ricardo-ye/agent-blackboard/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/github/license/Ricardo-ye/agent-blackboard)](LICENSE)
+
 基于经典黑板模式（Blackboard Pattern）的多智能体动态协作系统，支持智能体注册管理、实时信息共享、智能任务分配、冲突自动解决和动态协作规则配置。
 
 项目提供 FastAPI 后端、SQLite 异步存储、WebSocket 实时事件流和一套无需构建的 Web 控制台，适合用于多智能体协调机制的原型验证、教学与二次开发。
+
+> 一个可运行、可观察、可治理的 Blackboard Pattern 多智能体协作参考实现。
+
+## 为什么选择 Agent Blackboard
+
+- **完整协作闭环**：从能力注册、任务依赖与自动分配，到共享知识、冲突治理与实时事件通知。
+- **显式协作治理**：规则引擎、乐观锁、投票/合并/升级策略使协作决策可见、可调、可测试。
+- **本地优先、阅读友好**：FastAPI + SQLite + 原生 ES Module，无须外部消息队列或前端构建链即可运行。
+- **开箱可观察**：Web 控制台、WebSocket 事件流、`/api/stats` 与 Prometheus 风格 `/metrics`。
+
+## 60 秒运行
+
+```bash
+git clone https://github.com/Ricardo-ye/agent-blackboard.git
+cd agent-blackboard
+docker compose up --build
+```
+
+随后打开：<http://localhost:8000/ui/>（控制台）或 <http://localhost:8000/docs>（API 文档）。
+不使用 Docker 时，请阅读[快速开始](docs/getting-started.md)。
 
 ## 核心功能
 
@@ -212,12 +236,19 @@ uvicorn main:app --port 8000
 ```
 agent-tree/
 ├── .github/                     # CI、Issue 与 PR 模板
+├── docs/                         # 上手、概念、运维与开发文档
+├── examples/                     # 最小协作闭环示例
+├── scripts/                      # 可重复执行的演示工具
 ├── .env.example                 # 环境变量示例（不含真实凭证）
+├── .dockerignore                 # Docker 构建上下文排除规则
+├── compose.yml                   # 一键本地运行
+├── Dockerfile                    # 非 root 容器镜像
 ├── CODE_OF_CONDUCT.md           # 社区行为准则
 ├── CONTRIBUTING.md              # 贡献指南
 ├── LICENSE                      # MIT 许可证
 ├── SECURITY.md                  # 安全报告政策
 ├── ARCHITECTURE.md              # 架构设计文档
+├── CHANGELOG.md                 # 版本变更记录
 ├── README.md                    # 本文件
 ├── requirements.txt             # 依赖列表
 ├── config.py                    # 系统配置
@@ -296,10 +327,16 @@ agent-tree/
 
 ## 文档
 
+- [快速开始](docs/getting-started.md)
+- [核心概念](docs/concepts.md)
+- [运行与安全](docs/operations.md)
+- [开发指南](docs/development.md)
+- [发布策略](docs/releasing.md)
 - [架构设计文档](ARCHITECTURE.md)
 - [反思分析报告](reports/reflective_analysis.md)
 - [性能测试报告](reports/performance_test_report.md)
 - [最优制作方案](reports/optimal_implementation_plan.md)
+- [变更记录](CHANGELOG.md)
 - [API文档](http://localhost:8000/docs) (启动后访问)
 
 ## 参与贡献
@@ -310,3 +347,11 @@ agent-tree/
 ## 许可证
 
 本项目基于 [MIT License](LICENSE) 开源。
+
+## 路线图
+
+- [x] 本地优先的 SQLite 协作闭环与实时控制台
+- [x] Docker Compose、一键演示与 CI API/WebSocket 冒烟
+- [ ] 可选 PostgreSQL 存储实现与迁移指南
+- [ ] OpenTelemetry 分布式追踪与事件关联 ID
+- [ ] Playwright 跨浏览器 UI 端到端测试

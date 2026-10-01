@@ -1,0 +1,6 @@
+{
+  "include": ["app", "main.py", "config.py"],
+  "exclude": ["python", "data", ".venv", "tests"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "basic"
+}

@@ -1,0 +1,16 @@
+services:
+  agent-blackboard:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      BLACKBOARD_DB_PATH: /app/data/blackboard.db
+      BLACKBOARD_API_KEY: ${BLACKBOARD_API_KEY:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+    volumes:
+      - blackboard-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  blackboard-data:

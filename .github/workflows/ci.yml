@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -28,8 +33,40 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
 
+      - name: Set up Node.js for Pyright
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Compile Python sources
         run: python -m compileall -q app main.py config.py
 
+      - name: Type check
+        run: npx --yes pyright --pythonpath "$(which python)" --project pyrightconfig.json
+
       - name: Run test suite
         run: python -m pytest -q
+
+  integration-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: Run API, WebSocket and runtime smoke checks
+        run: |
+          python tests/e2e_verify.py
+          python tests/ws_verify.py
+          python tests/runtime_probe.py
