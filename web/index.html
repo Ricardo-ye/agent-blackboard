@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="智能体动态协作黑板系统 —— 基于黑板模式的多智能体协作控制台">
+<title>黑板协作系统 · 多智能体控制台</title>
+
+<!-- 内联 SVG favicon，避免额外请求与 404 -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e7490'/%3E%3Cpath d='M8 10h16M8 16h11M8 22h7' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<!--
+  主题前置脚本：必须在样式与内容渲染前定好 data-theme，
+  否则刷新时会先闪一下浅色再跳到深色（FOUC）。
+-->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('blackboard.theme');
+      var dark = saved ? saved === 'dark'
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    } catch (e) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  })();
+</script>
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div id="root"></div>
+
+  <noscript>
+    <div style="padding:40px;font-family:system-ui,sans-serif;text-align:center">
+      该控制台需要启用 JavaScript 才能运行。
+      后端接口仍可直接使用，参见 <a href="/docs">/docs</a>。
+    </div>
+  </noscript>
+
+  <script type="module">
+    import { bootstrap } from './js/app.js';
+    bootstrap();
+  </script>
+</body>
+</html>

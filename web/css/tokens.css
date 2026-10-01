@@ -1,0 +1,255 @@
+/* ==========================================================================
+   设计令牌（Design Tokens）—— 全站样式的唯一真源
+   --------------------------------------------------------------------------
+   约定：组件样式只允许引用这里的变量，禁止写死颜色 / 间距 / 字号。
+   主题切换通过 <html data-theme="dark|light"> 完成；该属性由 index.html
+   的内联脚本在首帧前置位，避免刷新时的白屏闪烁（FOUC）。
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- 中性色阶 ---------- */
+  --n-0:   hsl(0 0% 100%);
+  --n-25:  hsl(215 25% 99%);
+  --n-50:  hsl(215 25% 97%);
+  --n-100: hsl(215 22% 94%);
+  --n-200: hsl(215 18% 87%);
+  --n-300: hsl(215 14% 75%);
+  --n-400: hsl(215 12% 59%);
+  --n-500: hsl(215 14% 46%);
+  --n-600: hsl(215 18% 36%);
+  --n-700: hsl(215 22% 28%);
+  --n-800: hsl(215 25% 20%);
+  --n-900: hsl(215 28% 14%);
+  --n-950: hsl(215 30% 10%);
+
+  /* ---------- 品牌色阶（青，色相 189） ---------- */
+  --b-50:  hsl(189 90% 96%);
+  --b-100: hsl(189 88% 89%);
+  --b-200: hsl(189 85% 79%);
+  --b-300: hsl(189 80% 63%);
+  --b-400: hsl(189 75% 50%);
+  --b-500: hsl(189 78% 41%);
+  --b-600: hsl(189 82% 34%);
+  --b-700: hsl(189 85% 28%);
+  --b-800: hsl(189 85% 22%);
+  --b-900: hsl(189 80% 17%);
+
+  /* ---------- 语义色（成功 / 警告 / 危险 / 信息） ---------- */
+  --s-50:  hsl(152 60% 96%);
+  --s-200: hsl(152 55% 82%);
+  --s-400: hsl(152 55% 45%);
+  --s-500: hsl(152 62% 36%);
+  --s-700: hsl(152 65% 26%);
+
+  --w-50:  hsl(38 92% 96%);
+  --w-200: hsl(38 90% 80%);
+  --w-400: hsl(38 92% 50%);
+  --w-500: hsl(32 90% 45%);
+  --w-700: hsl(28 85% 35%);
+
+  --d-50:  hsl(0 80% 97%);
+  --d-200: hsl(0 78% 85%);
+  --d-400: hsl(0 74% 58%);
+  --d-500: hsl(0 72% 48%);
+  --d-700: hsl(0 70% 38%);
+
+  --i-50:  hsl(217 90% 96%);
+  --i-200: hsl(217 88% 84%);
+  --i-400: hsl(217 85% 60%);
+  --i-500: hsl(217 82% 48%);
+  --i-700: hsl(217 80% 38%);
+
+  --v-50:  hsl(265 85% 97%);
+  --v-200: hsl(265 80% 86%);
+  --v-400: hsl(265 75% 66%);
+  --v-500: hsl(265 70% 55%);
+  --v-700: hsl(265 65% 43%);
+
+  /* ---------- 语义化表面与文字 ---------- */
+  --bg-app:        var(--n-50);
+  --bg-surface:    var(--n-0);
+  --bg-elevated:   var(--n-0);
+  --bg-subtle:     var(--n-100);
+  --bg-hover:      var(--n-100);
+  --bg-active:     var(--n-200);
+  --bg-inset:      var(--n-50);
+
+  --border-subtle: var(--n-200);
+  --border:        var(--n-200);
+  --border-strong: var(--n-300);
+
+  --text-primary:   var(--n-900);
+  --text-secondary: var(--n-600);
+  --text-tertiary:  var(--n-500);
+  --text-disabled:  var(--n-400);
+  --text-on-brand:  var(--n-0);
+  --text-link:      var(--b-600);
+
+  --focus-ring: 0 0 0 3px hsl(189 80% 50% / 0.35);
+
+  /* ---------- 状态徽章配色 ---------- */
+  --st-success-fg: var(--s-700);
+  --st-success-bg: var(--s-50);
+  --st-success-bd: var(--s-200);
+
+  --st-warn-fg: var(--w-700);
+  --st-warn-bg: var(--w-50);
+  --st-warn-bd: var(--w-200);
+
+  --st-danger-fg: var(--d-700);
+  --st-danger-bg: var(--d-50);
+  --st-danger-bd: var(--d-200);
+
+  --st-info-fg: var(--i-700);
+  --st-info-bg: var(--i-50);
+  --st-info-bd: var(--i-200);
+
+  --st-brand-fg: var(--b-700);
+  --st-brand-bg: var(--b-50);
+  --st-brand-bd: var(--b-100);
+
+  --st-neutral-fg: var(--n-700);
+  --st-neutral-bg: var(--n-100);
+  --st-neutral-bd: var(--n-200);
+
+  /* ---------- 间距刻度（4px 基准） ---------- */
+  --sp-0:  0;
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  28px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* ---------- 字体 ---------- */
+  --ff-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+             "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+             Helvetica, Arial, sans-serif;
+  --ff-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+             "Liberation Mono", "Courier New", monospace;
+
+  --fs-2xs: 11px;
+  --fs-xs:  12px;
+  --fs-sm:  13px;
+  --fs-base: 14px;
+  --fs-md:  15px;
+  --fs-lg:  17px;
+  --fs-xl:  20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+  --fs-4xl: 36px;
+
+  --lh-tight:  1.25;
+  --lh-snug:   1.4;
+  --lh-normal: 1.6;
+  --lh-loose:  1.75;
+
+  --fw-normal:   400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* ---------- 圆角 ---------- */
+  --r-xs:  4px;
+  --r-sm:  6px;
+  --r-md:  8px;
+  --r-lg:  12px;
+  --r-xl:  16px;
+  --r-2xl: 22px;
+  --r-full: 9999px;
+
+  /* ---------- 阴影 ---------- */
+  --sh-xs: 0 1px 2px hsl(215 25% 15% / 0.06);
+  --sh-sm: 0 1px 3px hsl(215 25% 15% / 0.08), 0 1px 2px hsl(215 25% 15% / 0.04);
+  --sh-md: 0 4px 12px hsl(215 25% 15% / 0.08), 0 1px 3px hsl(215 25% 15% / 0.06);
+  --sh-lg: 0 12px 32px hsl(215 25% 15% / 0.12), 0 2px 8px hsl(215 25% 15% / 0.06);
+  --sh-xl: 0 24px 56px hsl(215 25% 15% / 0.18);
+
+  /* ---------- 动效 ---------- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 120ms var(--ease);
+  --t-base: 200ms var(--ease);
+  --t-slow: 320ms var(--ease);
+
+  /* ---------- 层级 ---------- */
+  --z-sticky: 100;
+  --z-backdrop: 150;
+  --z-drawer: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* ---------- 布局尺寸 ---------- */
+  --sidebar-w: 236px;
+  --topbar-h: 56px;
+  --content-max: 1280px;
+}
+
+/* ==========================================================================
+   深色主题
+   ========================================================================== */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-app:        hsl(215 28% 9%);
+  --bg-surface:    hsl(215 25% 13%);
+  --bg-elevated:   hsl(215 22% 16%);
+  --bg-subtle:     hsl(215 22% 18%);
+  --bg-hover:      hsl(215 22% 21%);
+  --bg-active:     hsl(215 20% 25%);
+  --bg-inset:      hsl(215 28% 7%);
+
+  --border-subtle: hsl(215 18% 19%);
+  --border:        hsl(215 16% 24%);
+  --border-strong: hsl(215 14% 33%);
+
+  --text-primary:   hsl(215 20% 96%);
+  --text-secondary: hsl(215 14% 72%);
+  --text-tertiary:  hsl(215 12% 56%);
+  --text-disabled:  hsl(215 10% 42%);
+  --text-on-brand:  hsl(215 30% 10%);
+  --text-link:      var(--b-300);
+
+  --focus-ring: 0 0 0 3px hsl(189 80% 55% / 0.4);
+
+  /* 深色下品牌主色提亮，保证对比度 */
+  --b-500: hsl(189 78% 46%);
+  --b-600: hsl(189 80% 52%);
+  --b-700: hsl(189 78% 62%);
+
+  --st-success-fg: hsl(152 60% 68%);
+  --st-success-bg: hsl(152 55% 16%);
+  --st-success-bd: hsl(152 50% 28%);
+
+  --st-warn-fg: hsl(38 90% 68%);
+  --st-warn-bg: hsl(32 70% 16%);
+  --st-warn-bd: hsl(32 60% 30%);
+
+  --st-danger-fg: hsl(0 80% 74%);
+  --st-danger-bg: hsl(0 60% 18%);
+  --st-danger-bd: hsl(0 55% 32%);
+
+  --st-info-fg: hsl(217 90% 76%);
+  --st-info-bg: hsl(217 70% 18%);
+  --st-info-bd: hsl(217 60% 32%);
+
+  --st-brand-fg: hsl(189 85% 70%);
+  --st-brand-bg: hsl(189 70% 16%);
+  --st-brand-bd: hsl(189 60% 30%);
+
+  --st-neutral-fg: hsl(215 14% 76%);
+  --st-neutral-bg: hsl(215 18% 20%);
+  --st-neutral-bd: hsl(215 14% 30%);
+
+  --sh-xs: 0 1px 2px hsl(0 0% 0% / 0.3);
+  --sh-sm: 0 1px 3px hsl(0 0% 0% / 0.4);
+  --sh-md: 0 4px 12px hsl(0 0% 0% / 0.45);
+  --sh-lg: 0 12px 32px hsl(0 0% 0% / 0.55);
+  --sh-xl: 0 24px 56px hsl(0 0% 0% / 0.65);
+}
