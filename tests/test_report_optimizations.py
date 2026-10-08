@@ -124,14 +124,22 @@ async def test_database_aggregate_stats_and_prometheus_output(
     assert stats.total_entries == 1
 
     import main as main_module
+    from app.observability import request_metrics
 
     original_storage = main_module.services.storage
     main_module.services.storage = storage
+    request_metrics.reset()
+    request_metrics.record(
+        method="GET", route="/api/stats", status_code=200, duration_seconds=0.01
+    )
     try:
         payload = await main_module.metrics()
     finally:
         main_module.services.storage = original_storage
+        request_metrics.reset()
 
     assert "# TYPE blackboard_agents_total gauge" in payload
     assert "blackboard_agents_total 1" in payload
     assert "blackboard_event_bus_dropped_events_total" in payload
+    assert "blackboard_http_requests_total" in payload
+    assert "blackboard_http_request_duration_seconds_bucket" in payload

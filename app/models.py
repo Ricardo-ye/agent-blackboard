@@ -240,6 +240,7 @@ class Event(BaseModel):
     event_type: str
     data: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    trace_id: str | None = None
 
 
 class Stats(BaseModel):

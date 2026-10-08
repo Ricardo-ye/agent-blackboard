@@ -38,6 +38,8 @@ data/*
 .verify-ui/
 test-results/
 playwright-report/
+reports/benchmarks/*.json
+!reports/benchmarks/.gitkeep
 
 # Logs and process files
 *.log

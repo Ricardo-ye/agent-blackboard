@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Awaitable
 
 from app.models import Event
+from app.observability import current_trace_id
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ class EventBus:
             event_type=event_type,
             data=data or {},
             timestamp=datetime.now(timezone.utc),
+            trace_id=current_trace_id(),
         )
 
         # Notify event type handlers

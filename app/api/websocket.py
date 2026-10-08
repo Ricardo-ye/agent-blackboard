@@ -132,6 +132,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         "event": event.event_type,
                         "data": event.data,
                         "timestamp": event.timestamp.isoformat(),
+                        "trace_id": event.trace_id,
                     })
                 except asyncio.TimeoutError:
                     # 超时后检查queue是否变更

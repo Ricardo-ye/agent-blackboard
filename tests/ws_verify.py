@@ -59,6 +59,8 @@ async def ws_check():
         msg = json.loads(raw)
         results.append(("收到实时推送", msg.get("event") == "agent.registered",
                         json.dumps(msg, ensure_ascii=False)[:150]))
+        results.append(("实时推送携带关联 ID", bool(msg.get("trace_id")),
+                        f"trace_id={msg.get('trace_id')}"))
 
         # 触发 task.created
         s, _ = post("/api/tasks", {"title": "WS Task"})

@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 from contextlib import asynccontextmanager
 
 from pathlib import Path
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +18,13 @@ from app.services import services
 from app.api import agents, entries, tasks, rules, conflicts, websocket
 from app.models import Stats
 from app.event_bus import event_bus
+from app.observability import (
+    REQUEST_ID_HEADER,
+    request_metrics,
+    request_trace_id,
+    reset_trace_id,
+    set_trace_id,
+)
 
 # 应用日志接入 uvicorn 的日志配置，保证与 uvicorn 的 INFO 行同通道输出
 # （不配置 handler 时 root logger 默认 WARNING，info 级启动信息会丢失）
@@ -68,6 +76,30 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def observe_http_request(request: Request, call_next):
+    """为每个 HTTP 请求建立关联 ID，并记录低基数的运行时指标。"""
+    trace_id = request_trace_id(request.headers.get(REQUEST_ID_HEADER))
+    token = set_trace_id(trace_id)
+    started_at = time.perf_counter()
+    status_code = 500
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        response.headers[REQUEST_ID_HEADER] = trace_id
+        return response
+    finally:
+        route = request.scope.get("route")
+        route_path = getattr(route, "path", None) or "<unmatched>"
+        request_metrics.record(
+            method=request.method,
+            route=route_path,
+            status_code=status_code,
+            duration_seconds=time.perf_counter() - started_at,
+        )
+        reset_trace_id(token)
 
 # 注册路由
 # 鉴权粒度：写操作（POST/PUT/PATCH/DELETE）在各自路由上挂 require_api_key，
@@ -124,6 +156,7 @@ async def metrics() -> str:
         "# TYPE blackboard_event_bus_dropped_events_total counter",
         f"blackboard_event_bus_dropped_events_total {event_bus.dropped_events}",
     ))
+    lines.extend(request_metrics.render_prometheus())
     return "\n".join(lines) + "\n"
 
 

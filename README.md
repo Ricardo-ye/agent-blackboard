@@ -15,7 +15,10 @@
 - **完整协作闭环**：从能力注册、任务依赖与自动分配，到共享知识、冲突治理与实时事件通知。
 - **显式协作治理**：规则引擎、乐观锁、投票/合并/升级策略使协作决策可见、可调、可测试。
 - **本地优先、阅读友好**：FastAPI + SQLite + 原生 ES Module，无须外部消息队列或前端构建链即可运行。
-- **开箱可观察**：Web 控制台、WebSocket 事件流、`/api/stats` 与 Prometheus 风格 `/metrics`。
+- **开箱可观察**：Web 控制台、WebSocket 事件流、`/api/stats`、Prometheus 风格 `/metrics`，以及贯穿 HTTP 与领域事件的请求关联 ID。
+
+> **定位说明**：这里的 Agent 是参与共享协作的工作单元；任务分配和规则执行保持确定性，
+> 并非 LLM 自主规划系统。选择依据与扩展边界见[Agent 与 Workflow](docs/agent-vs-workflow.md)。
 
 ## 60 秒运行
 
@@ -196,6 +199,9 @@ uvicorn main:app --port 8000
 
 # 性能测试：自动启停服务，无需手工准备
 .\python\python.exe tests/run_performance.py
+
+# 同时保留带运行环境的 JSON 基线（默认不提交）
+.\python\python.exe tests/run_performance.py --report reports/benchmarks/local.json
 ```
 
 > 自启脚本各自使用临时数据库与独立端口（E2E 8123 / 性能 8124 /
@@ -231,6 +237,13 @@ uvicorn main:app --port 8000
 | GET | `/metrics` | Prometheus 文本指标 | — |
 | WS | `/ws` | WebSocket实时事件推送 | — |
 
+### 观测与问题定位
+
+- HTTP 处理器正常返回的响应携带 `X-Request-ID`。调用方传入由字母、数字、`.`、`_`、`-` 组成且最长 128 字符的值时会原样保留；其他值由服务端替换为 UUID。
+- 同一请求触发的领域事件会携带相同 `trace_id`，WebSocket 推送将其原样返回。可据此关联「请求 → 事件 → 实时通知」。
+- `/metrics` 同时提供实体状态、事件总线丢弃数和低基数的 HTTP 请求计数/延迟直方图；标签只使用 method、路由模板和状态码，不记录业务 ID 或 query 参数。
+- 性能数字会受机器、Python 版本和 SQLite 文件系统影响。请用 `tests/run_performance.py` 在目标环境复测，不把本地单实例结果外推为生产容量。
+
 ## 项目结构
 
 ```
@@ -257,6 +270,7 @@ agent-tree/
 │   ├── models.py                # Pydantic数据模型
 │   ├── storage.py               # 存储抽象层+SQLite实现
 │   ├── event_bus.py             # 异步事件总线
+│   ├── observability.py          # 请求关联 ID 与 Prometheus 指标
 │   ├── deps.py                  # API依赖（鉴权）
 │   ├── agent_registry.py        # 智能体注册管理
 │   ├── blackboard.py            # 黑板核心服务
@@ -332,6 +346,11 @@ agent-tree/
 - [运行与安全](docs/operations.md)
 - [开发指南](docs/development.md)
 - [发布策略](docs/releasing.md)
+- [Agent 与 Workflow 的边界](docs/agent-vs-workflow.md)
+- [性能基线与报告](docs/benchmarking.md)
+- [可用性研究协议](docs/usability-study.md)
+- [项目案例说明](docs/case-study.md)
+- [面试讲述稿](docs/interview-guide.md)
 - [架构设计文档](ARCHITECTURE.md)
 - [反思分析报告](reports/reflective_analysis.md)
 - [性能测试报告](reports/performance_test_report.md)
@@ -353,5 +372,6 @@ agent-tree/
 - [x] 本地优先的 SQLite 协作闭环与实时控制台
 - [x] Docker Compose、一键演示与 CI API/WebSocket 冒烟
 - [ ] 可选 PostgreSQL 存储实现与迁移指南
-- [ ] OpenTelemetry 分布式追踪与事件关联 ID
+- [x] HTTP 请求关联 ID、领域事件 `trace_id` 与 Prometheus 请求延迟直方图
+- [ ] OpenTelemetry 导出器与跨进程分布式追踪
 - [ ] Playwright 跨浏览器 UI 端到端测试
